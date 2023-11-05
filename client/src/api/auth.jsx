@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const url = "http://localhost:5000";
+const url = "https://blogapi-gslp.onrender.com";
 
 //!needed to change this to a function because token does not update upon login
 const config = () => ({

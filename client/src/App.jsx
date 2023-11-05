@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Container } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Home from "./pages/Home";
 import MyPosts from "./pages/MyPosts";
@@ -17,30 +17,28 @@ function App() {
     Boolean(localStorage.getItem("Authorization"))
   );
 
-  //Get local storage every time user refreshes the page
-  useEffect(() => {
-    setIsAuth(Boolean(localStorage.getItem("Authorization")));
-  }, []);
-
   return (
-    <Container maxWidth={false} style={{ padding: 0 }}>
-      <BrowserRouter>
+    <BrowserRouter>
+      <Container maxWidth={false} style={{ padding: 0 }}>
         <Navbar isAuth={isAuth} />
         <Routes>
           <Route path="/" element={<Navigate to="/posts" />} />
-          <Route path="/posts" element={<Home />} />
-          <Route path="/posts/search" element={<Home />} />
+          <Route path="/posts" element={<Home setIsAuth={setIsAuth} />} />
+          <Route
+            path="/posts/search"
+            element={<Home setIsAuth={setIsAuth} />}
+          />
           <Route path="/posts/:id" element={<PostDetails />} />
 
-          <Route path="/auth" element={<Auth />} />
+          <Route path="/auth" element={<Auth setIsAuth={setIsAuth} />} />
           <Route
             path="/myposts"
             element={isAuth ? <MyPosts /> : <Navigate to="/" />}
           />
           <Route path="*" element={<Home />} />
         </Routes>
-      </BrowserRouter>
-    </Container>
+      </Container>
+    </BrowserRouter>
   );
 }
 

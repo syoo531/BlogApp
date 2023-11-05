@@ -2,18 +2,10 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setLogin } from "../../redux/authSlice";
-import axios from "axios";
+import * as API from "../../api/auth";
 
+import { Container, Button, Paper, Grid, Typography } from "@mui/material";
 import { paperStyle } from "./styles";
-import {
-  Container,
-  Button,
-  Paper,
-  Grid,
-  Typography,
-} from "@mui/material";
-//import useStyles from "./styles";
 import Input from "./Input";
 
 const initialState = {
@@ -24,12 +16,15 @@ const initialState = {
   confirmPassword: "",
 };
 
-const Form = () => {
-  const [form, setForm] = useState(initialState);
-  const [isSignup, setIsSignup] = useState(false); //checks if signup page or not
+const Form = ({setIsAuth}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  //const classes = useStyles();
+  const [form, setForm] = useState(initialState);
+  const [isSignup, setIsSignup] = useState(false); //checks if signup page or not
+  const [helperText, setHelperText] = useState({})
+  //const error = useSelector((state) => state.auth.error);
+  //const isPending = useSelector((state) => state.auth.isPending);
+  //const user = useSelector((state) => state.auth.user);
 
   const [showPassword, setShowPassword] = useState(false);
   const handleShowPassword = () => setShowPassword(!showPassword);
@@ -39,52 +34,45 @@ const Form = () => {
     setShowPassword(false);
     setForm(initialState);
   };
+  
+  const register = () => {
+    if (checkPasswordConfirm()) {
+      return
+    }
+    dispatch(API.register(form)).then((data) => {
+      if (data?.type?.endsWith("fulfilled")) setIsSignup(false);
+    }).then(()=>{ setHelperText({})})
+  };
 
-  const register = async () => {
+  const login = async () => {
     try {
-      const res = await fetch("http://localhost:5000/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json", // Specify JSON content
-        },
-        body: JSON.stringify(form), //convert to JSON
-      });
-      if (res.ok) setIsSignup(false); //direct to login form
+      const data = await dispatch(API.login(form));
+      if (data?.type?.endsWith("fulfilled")) {
+        setIsAuth(true)
+        navigate("/");
+      } else {
+        setForm(initialState);
+        window.alert("잘못된 정보를 입력하였습니다");
+      }
     } catch (err) {
       console.log(err);
     }
   };
 
-  const login = async () => {
-    const res = await axios.post(
-      "http://localhost:5000/auth",
-      JSON.stringify(form),
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true, // Include credentials in the request
-      }
-    );
-
-    if (res.status == 200) {
-      const authorizationHeader = res.headers.get("Authorization");
-      localStorage.setItem("Authorization", authorizationHeader);
-      
-      dispatch(setLogin({ user: res.data.user })); //** 일단 disatch and setLocalStorage together
-      localStorage.setItem('profile', JSON.stringify(res.data.user));
-      navigate("/");
-    } else {
-      setForm(initialState);
-      window.alert("잘못된 정보를 입력하였습니다");
+  //logic check
+  const checkPasswordConfirm = () => {
+    if (form.confirmPassword === form.password) {
+      setHelperText({...helperText, password: "비밀번호가 일치하지 않습니다."})
+      return false
     }
-  };
-
+  }
+  
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
     isSignup ? register() : login();
   };
 
@@ -95,7 +83,7 @@ const Form = () => {
           {isSignup ? "Sign up" : "Sign in"}
         </Typography>
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={3} sx={{mt: 1, mb: 2}}>
+          <Grid container spacing={3} sx={{ mt: 1, mb: 2 }}>
             {isSignup && (
               <>
                 <Input
@@ -130,6 +118,8 @@ const Form = () => {
               type={showPassword ? "text" : "password"}
               handleShowPassword={handleShowPassword}
               value={form.password}
+              helperText={helperText.password ? helperText.password : null}
+              //error={error && true}
             />
             {isSignup && (
               <Input

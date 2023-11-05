@@ -45,7 +45,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 //@route GET /users/profile
 //@ access Private
 export const getUserProfile = asyncHandler(async (req, res) => {
-  const userPosts = await Post.find({ user: req.user.id });
+  const userPosts = await Post.find({ user: req.user.id }).sort({ _id: -1 });
   res.status(200).json({ userPosts });
 });
 

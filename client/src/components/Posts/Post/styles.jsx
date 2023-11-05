@@ -4,7 +4,7 @@ export const styles = {
   media: css`
     height: 0;
     padding-top: 56.25%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.3);
     background-blend-mode: darken;
   `,
   border: css`

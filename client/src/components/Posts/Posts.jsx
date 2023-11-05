@@ -2,20 +2,25 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-//import { setAllPosts } from "../../redux/allPostsSlice";
-//import { setPostsToStore } from "../../redux/authSlice";
-import * as API from "../../redux/api";
+import * as API from "../../api/services";
 
 import { Grid, CircularProgress } from "@mui/material";
 import { styles } from "./styles";
+import styled from "@emotion/styled";
 import Post from "./Post/Post";
 
-// page = 1
+const MessageContainer = styled.div({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center"
+});
+
+
 const Posts = ({ setCurrentId }) => {
   const dispatch = useDispatch();
-  const { posts, isLoading, error } = useSelector((state) => state.posts);
   const location = useLocation();
-  const isProfile = location.pathname === "/myposts"; //TODO: 불안정함
+  const { posts, isLoading, error } = useSelector((state) => state.posts);
+  const isProfile = location.pathname === "/myposts";
 
   // const renderCount = useRef(0);
   // useEffect(() => {
@@ -40,26 +45,21 @@ const Posts = ({ setCurrentId }) => {
 
   useEffect(() => {
     if (isProfile) {
-      //URL 따서 myposts인지 확인
-      getUserPosts();
+      getUserPosts();  //if url path is /myposts render user posts
     } 
-    // return () => {
-    //   dispatch(clearStore());
-    //};
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isLoading) {
-    //return <div>is loading...</div>
-    return <CircularProgress />;
+    return <MessageContainer><CircularProgress /></MessageContainer>;
   }
 
   if (error) {
-    return <div>Error fetching data...Error: {error}</div>;
+    return <MessageContainer>Error fetching data...Error: {error}</MessageContainer>;
   }
 
   return !posts?.length ? (
-    <div>There are no posts..</div>
+    <MessageContainer>There are no posts..</MessageContainer>
   ) : (
     <Grid css={styles.container} container alignItems="stretch" spacing={3}>
       {posts.map((post) => (

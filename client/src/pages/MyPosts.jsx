@@ -1,6 +1,5 @@
 /* @jsxImportSource @emotion/react */
 import { useState } from "react";
-//import { Container, Grow, Grid } from "@mui/material";
 import { Container, Grow, Grid } from "@mui/material";
 import Form from "../components/Form/Form";
 import Posts from "../components/Posts/Posts";

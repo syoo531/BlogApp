@@ -1,8 +1,9 @@
 /* @jsxImportSource @emotion/react */
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { setLogout, setProfileState } from "../../redux/authSlice";
+import { setLogout, setProfileState } from "../../store/authSlice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import { AppBar, Typography, Toolbar, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { styles} from "./styles";
@@ -19,7 +20,7 @@ const Navbar = () => {
 
   const logout = () => {
     localStorage.clear();
-    dispatch(setLogout()); //need to call action first
+    dispatch(setLogout()); 
     navigate("/");
   };
 

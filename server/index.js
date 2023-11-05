@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 dotenv.config();
 
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
-import postRoutes from "./routes/posts.js";
+import postRoutes from "./routes/postsRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
